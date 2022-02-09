@@ -174,7 +174,7 @@ for filename in args.infile:
         # however the last value (useragent) may contain ;, need to handle
         metadata = re.split(';ua=', device)
 
-        if (len(metadata) > 1):
+        if len(metadata) > 1:
             print('Test Params: "%s"' % metadata[0])
             print('User Agent:  "%s"\n' % metadata[1])
 
@@ -224,9 +224,9 @@ for filename in args.infile:
             intact3dp = format(intactportion, '.3f')
 
             # construct result
-            if (intactportion < config[key]['minimum']):
+            if intactportion < config[key]['minimum']:
                 intactresult = 'INCOMPLETE'
-            elif (intactportion > config[key]['maximum']):
+            elif intactportion > config[key]['maximum']:
                 intactresult = 'UNEXPECTED'
             else:
                 intactresult = 'OK'
@@ -246,7 +246,7 @@ for filename in args.infile:
             out.write('\n')
 
         # if there are no sections detected, add row to output file
-        if (len(count) == 0):
+        if len(count) == 0:
             out.write(outdevice + ',,,,,,,,,,,,,\n')
 
         print()      
