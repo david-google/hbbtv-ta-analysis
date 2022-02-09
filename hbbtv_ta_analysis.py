@@ -200,7 +200,7 @@ for filename in args.infile:
         print()
 
         ## transitions
-        lasttime=0
+        lasttime = 0
         for key in count.keys():
             # calculate any gap between prior and current section
             if (lasttime == 0):
@@ -252,5 +252,5 @@ for filename in args.infile:
         print()      
 
 # end
-print(f'Results exported to {outfile}\n')
+print('Results exported to %s\n' % outfile)
 out.close()
