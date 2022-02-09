@@ -83,8 +83,8 @@ config[set6['section']] = set6
 section = dict()
 for key in config.keys():
     subsection = dict()
-    for frame in range(config[key]['first'],config[key]['last']+1):
-        subsection[frame]=key
+    for frame in range(config[key]['first'],config[key]['last'] + 1):
+        subsection[frame] = key
     try:
         section[config[key]['label']].update(subsection)
     except KeyError:
@@ -123,7 +123,7 @@ for filename in args.infile:
             if row['qr_frame']:
                 if row['prev_frame_diff'] != 'duplicate':
                     # account for this frame
-                    label=row['qr_label']
+                    label = row['qr_label']
 
                     # check for special CONFIG frame
                     if label == 'CONFIG':
@@ -135,7 +135,7 @@ for filename in args.infile:
                     # frame number
                     frame = int(row['qr_frame'])
                     if frame in section[label].keys():
-                        this_section=section[row['qr_label']][frame]
+                        this_section = section[row['qr_label']][frame]
                         # update counters
                         if this_section in count.keys():
                             count[this_section]+=1
@@ -143,9 +143,9 @@ for filename in args.infile:
 
                             # count inverted frames
                             if this_section not in inverted.keys():
-                                inverted[this_section]=0
+                                inverted[this_section] = 0
                             if row['prev_frame_diff'] == 'inverted':
-                                inverted[this_section]+=1
+                                inverted[this_section] += 1
                         else:
                             first[this_section] = frame
                             start[this_section] = float(row['wallclock'].replace(':',''))
@@ -159,7 +159,7 @@ for filename in args.infile:
                     label = row['qr_label']
                     frame = int(row['qr_frame'])
                     if frame in section[label].keys():
-                        this_section=section[row['qr_label']][frame]
+                        this_section = section[row['qr_label']][frame]
                         end[this_section] = float(row['wallclock'].replace(':',''))
             line_count += 1
         # output the report
@@ -203,23 +203,23 @@ for filename in args.infile:
             # calculate any gap between prior and current section
             if (lasttime == 0):
                 lasttime = start[key]
-            gap = start[key]-lasttime
-            length = end[key]-start[key]
+            gap = start[key] - lasttime
+            length = end[key] - start[key]
             gap3dp = format(gap,'.3f')
             length3dp = format(length,'.3f')
 
             # determine how complete the section was
-            missingstart=first[key]-config[key]['first']
-            missingend=config[key]['last']-last[key]
+            missingstart = first[key] - config[key]['first']
+            missingend = config[key]['last'] - last[key]
 
             # calculate intact %
-            intactcount=0
-            for frame in range(config[key]['first'],config[key]['last']+1):
+            intactcount = 0
+            for frame in range(config[key]['first'], config[key]['last'] + 1):
                 if frame in visited[key]:
                     intactcount=intactcount+1
-            requiredcount=config[key]['last']-config[key]['first']+1
-            intactportion=float(intactcount)/float(requiredcount)
-            intact3dp = format(intactportion,'.3f')
+            requiredcount = config[key]['last'] - config[key]['first'] + 1
+            intactportion = float(intactcount) / float(requiredcount)
+            intact3dp = format(intactportion, '.3f')
 
             # construct result
             if (intactportion < config[key]['minimum']):
