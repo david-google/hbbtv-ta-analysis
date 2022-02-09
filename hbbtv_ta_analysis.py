@@ -98,7 +98,7 @@ args = parser.parse_args()
 # open each CSV file in turn, process it and output results
 for filename in args.infile:
     if os.path.exists(filename) and filename.find(outprefix) != -1:
-        print(f'File not found: {filename}\n')
+        print('File not found: %s\n' % filename)
         break;        
     with open(filename, mode='r') as csv_file:
         # reset lookup tables for storing facts for each section
