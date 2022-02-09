@@ -28,7 +28,7 @@ set2 = {
     'maximum':  1
     }
 set3 = {
-    'section':  'Broadcast ads',
+    'section':  'Broadcast adverts',
     'label':    'DTG-ADINS-BC',
     'first':    4017,
     'last':     9836,
@@ -36,7 +36,7 @@ set3 = {
     'maximum':  0
     }
 set4 = {
-    'section':  'Digital ads',
+    'section':  'Digital adverts',
     'label':    'DTG-ADINS-BB',
     'first':    1,
     'last':     5825,
@@ -175,13 +175,14 @@ for filename in args.infile:
         metadata = re.split(';ua=', device)
 
         if (len(metadata) > 1):
-            print(f'Test Params: "{metadata[0]}"')
-            print(f'User Agent:  "{metadata[1]}"\n')
+            print('Test Params: "%s"' % metadata[0])
+            print('User Agent:  "%s"\n' % metadata[1])
 
             # extract the test params
             testparams = re.split (';', metadata[0])
             params = dict(s.split('=',1) for s in testparams)
-            outdevice = fileparts[0] + ',\"' + metadata[1] + '\",'+ params['result'] + ',' + params['vtype'] + ',' + params['tsource'] + ',' + params['starttime'] + ',' + params['endtime'] + ',' + params['taapi'] + ',' + params['delay']
+            outdevice = '%s,\"%s\",%s,%s,%s,%s,%s,%s,%s' % (fileparts[0], metadata[1], params['result'], params['vtype'], 
+                params['tsource'], params['starttime'], params['endtime'], params['taapi'], params['delay'])
         else:
             print('Test Config: Not detected\n')
             outdevice = fileparts[0] + ',N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A'
@@ -193,7 +194,8 @@ for filename in args.infile:
             visited_uniq = len(visited_set)
 
             # show section stats
-            print(f'{key}: {count[key]} frames ({visited_uniq} unique: {first[key]}>{last[key]}, time: {start[key]}>{end[key]}, inverted: {inverted[key]})')
+            print('%s:\t%s frames\t %s unique: %s>%s, time: %s>%s, inverted: %s' % 
+                    (key, count[key], visited_uniq, first[key], last[key], start[key], end[key], inverted[key]))
         
         print()
 
@@ -230,7 +232,7 @@ for filename in args.infile:
                 intactresult = 'OK'
 
             # show section tests results
-            print(f'{key}: {intactresult} gap {gap3dp}s, length {length3dp}s, missing start {missingstart}, end {missingend}')
+            print('%s:\t%s\t\t gap %ss, length %ss, missing start %s, end %s' % (key, intactresult, gap3dp, length3dp, missingstart, missingend))
             lasttime = end[key]  # set the time for next section
 
             ## for output file
@@ -239,9 +241,8 @@ for filename in args.infile:
             visited_uniq = len(visited_set)
 
             # show the device, then the results, then the section stats
-            out.write(outdevice + ',')
-            out.write(key + ',' + intactresult + ',' + str(gap3dp) + ',' + str(length3dp) + ',' + str(missingstart) + ',' + str(missingend)  + ',')
-            out.write(str(count[key]) + ',' + str(visited_uniq) + ',' + str(first[key]) + ',' + str(last[key]) + ',' + str(start[key]) + ',' + str(end[key])  + ',' + str(inverted[key]))
+            out.write('%s,%s,%s,%s,%s,%s,%s,' % (outdevice, key, intactresult, gap3dp, length3dp, missingstart, missingend))
+            out.write('%s,%s,%s,%s,%s,%s,%s' % (count[key], visited_uniq, first[key], last[key], start[key], end[key], inverted[key]))
             out.write('\n')
 
         # if there are no sections detected, add row to output file
