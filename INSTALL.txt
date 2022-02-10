@@ -1,0 +1,89 @@
+INSTALL.txt - HbbTV Targeted Advertising Scripts
+
+jgupta@google.com - 20220210
+
+1. Make sure you have python and python3 installed and in your path 
+
+2. Install modules for QR detection script
+
+---- Mac OSX
+
+Note: Install Brew https://brew.sh/ and Zbar https://pypi.org/project/pyzbar/
+
+$ /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+$ brew install zbar
+
+Note: I needed to upgrade pip first, you may not need to:
+
+jgupta-macbookpro3% /Library/Developer/CommandLineTools/usr/bin/python3 -m pip install --upgrade pip
+jgupta-macbookpro3% pip3 --version
+pip 21.3.1 from /Users/jgupta/Library/Python/3.8/lib/python/site-packages/pip (python 3.8)
+
+Install OpenCV, ImUtils, Zbar, PyZbar
+
+jgupta-macbookpro3% pip3 install opencv-python imutils pyzbar
+...
+Successfully installed numpy-1.22.1 opencv-python-4.5.5.62
+Successfully installed imutils-0.5.4
+Successfully installed pyzbar-0.1.8
+
+---- Linux
+
+jgupta@england:~/hbbtv$ sudo apt-get install pip
+jgupta@england:~/hbbtv$ pip3 install opencv-python imutils pyzbar
+Successfully installed opencv-python-4.5.5.62
+Successfully installed imutils-0.5.4
+  WARNING: The script read_zbar is installed in '/usr/local/google/home/jgupta/.local/bin' which is not on PATH.
+  Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
+Successfully installed pyzbar-0.1.8
+
+Add the 'zbar' script and the current folder to the PATH
+jgupta@england:~/hbbtv$ export PATH=/usr/local/google/home/jgupta/.local/bin:.:$PATH
+
+3. Sym-link or copy the latest version of the scripts into somewhere in your PATH (or the present folder), e.g. here is how my $HOME/bin folder looks - make sure the scripts themselves are executable  
+
+# save scripts in folder 'hbbtv-ta'
+# either sym link or copy them (one .sh and two .py) somewhere in PATH
+#
+% chmod 755 hbbtv-ta/*
+
+% ln -sf hbbtv-ta/hbbtv_orchestrator.sh hbbtv_orchestrator.sh
+% ln -sf hbbtv-ta/basic_qr_detection.py basic_qr_detection.py
+% ln -sf hbbtv-ta/hbbtv_ta_analysis.py hbbtv_ta_analysis.py 
+
+% ls -l hbbtv_orchestrator.sh basic_qr_detection.py hbbtv_ta_analysis.py
+lrwxr-xr-x  1 jgupta  primarygroup  30 10 Feb 09:39 basic_qr_detection.py -> hbbtv-ta/basic_qr_detection.py
+lrwxr-xr-x  1 jgupta  primarygroup  30 10 Feb 09:37 hbbtv_orchestrator.sh -> hbbtv-ta/hbbtv_orchestrator.sh
+lrwxr-xr-x  1 jgupta  primarygroup  29 10 Feb 09:39 hbbtv_ta_analysis.py -> hbbtv-ta/hbbtv_ta_analysis.py
+
+4. Take .mp4 videos of the HbbTV test app/stream with a suitable camera
+
+5. Run hbbtv_orchestrator.sh to extract the QR codes and analyse the results
+
+% hbbtv_orchestrator.sh 
+
+# HbbTV TA testing orchestrator, runs QR extraction and detection scripts
+# Can pass individual files to script, or run on a whole folder of videos
+# Configure script location at top
+#
+# Usage:  ./hbbtv_orchestrator.sh <video1.mp4> [<video2.mp4>] ... [videoN.mp4>]
+#         ./hbbtv_orchestrator.sh *.mp4
+#
+# jgupta@google.com - 20220204 - v0.3 - provides more info on console
+
+% basic_qr_detection.py
+usage: basic_qr_detection.py [-h] -v VIDEO
+basic_qr_detection.py: error: the following arguments are required: -v/--video
+
+% hbbtv_ta_analysis.py 
+usage: hbbtv_ta_analysis.py [-h] CSV [CSV ...]
+hbbtv_ta_analysis.py: error: the following arguments are required: CSV
+
+Typical usage will be:
+
+# run testing orchestrator across all mp4 files (QR code detection & analysis)
+% hbbtv_orchestrator.sh *.mp4
+
+# re-run analysis script across existing QR code CSV files
+% hbbtv_ta_analysis.py *.csv
+
