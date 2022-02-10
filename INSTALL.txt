@@ -42,19 +42,19 @@ jgupta@england:~/hbbtv$ export PATH=/usr/local/google/home/jgupta/.local/bin:.:$
 
 3. Sym-link or copy the latest version of the scripts into somewhere in your PATH (or the present folder), e.g. here is how my $HOME/bin folder looks - make sure the scripts themselves are executable  
 
-# save scripts in folder 'hbbtv-ta'
+# save scripts in folder 'hbbtv-ta-analysis'
 # either sym link or copy them (one .sh and two .py) somewhere in PATH
 #
-% chmod 755 hbbtv-ta/*
+% chmod 755 hbbtv-ta-analysis/*
 
-% ln -sf hbbtv-ta/hbbtv_orchestrator.sh hbbtv_orchestrator.sh
-% ln -sf hbbtv-ta/basic_qr_detection.py basic_qr_detection.py
-% ln -sf hbbtv-ta/hbbtv_ta_analysis.py hbbtv_ta_analysis.py 
+% ln -sf hbbtv-ta-analysis/hbbtv_orchestrator.sh hbbtv_orchestrator.sh
+% ln -sf hbbtv-ta-analysis/basic_qr_detection.py basic_qr_detection.py
+% ln -sf hbbtv-ta-analysis/hbbtv_ta_analysis.py hbbtv_ta_analysis.py 
 
 % ls -l hbbtv_orchestrator.sh basic_qr_detection.py hbbtv_ta_analysis.py
-lrwxr-xr-x  1 jgupta  primarygroup  30 10 Feb 09:39 basic_qr_detection.py -> hbbtv-ta/basic_qr_detection.py
-lrwxr-xr-x  1 jgupta  primarygroup  30 10 Feb 09:37 hbbtv_orchestrator.sh -> hbbtv-ta/hbbtv_orchestrator.sh
-lrwxr-xr-x  1 jgupta  primarygroup  29 10 Feb 09:39 hbbtv_ta_analysis.py -> hbbtv-ta/hbbtv_ta_analysis.py
+lrwxr-xr-x  1 jgupta  primarygroup  39 10 Feb 09:50 basic_qr_detection.py -> hbbtv-ta-analysis/basic_qr_detection.py
+lrwxr-xr-x  1 jgupta  primarygroup  39 10 Feb 09:50 hbbtv_orchestrator.sh -> hbbtv-ta-analysis/hbbtv_orchestrator.sh
+lrwxr-xr-x  1 jgupta  primarygroup  38 10 Feb 09:50 hbbtv_ta_analysis.py -> hbbtv-ta-analysis/hbbtv_ta_analysis.py
 
 4. Take .mp4 videos of the HbbTV test app/stream with a suitable camera
 
