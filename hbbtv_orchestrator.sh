@@ -36,7 +36,7 @@ for file in $@; do
   if (( ${#CSV_LIST} == 0 )); then
     CSV_LIST="$name.csv"
   else
-     CSV_LIST="$CSV_LIST $name.csv"
+    CSV_LIST="$CSV_LIST $name.csv"
   fi  
 done
 
