@@ -3,17 +3,26 @@
 if (( ${#1} == 0 )); then echo "
 # HbbTV TA testing orchestrator, runs QR extraction and detection scripts
 # Can pass individual files to script, or run on a whole folder of videos
-# Configure script location at top
+# Configure script location/python at top; examples for Linux, Mac and Cygwin
 #
 # Usage:  ./hbbtv_orchestrator.sh <video1.mp4> [<video2.mp4>] ... [videoN.mp4>]
 #         ./hbbtv_orchestrator.sh *.mp4
 #
-# jgupta@google.com - 20220204 - v0.3 - provides more info on console
+# jgupta@google.com - 20220211 - v0.4 - Linux, Mac, Cygwin config examples
 "; exit; fi
 
-# script location - either put in Path or use ./ to run in current directory
+# script and python location
+## Linux or Mac, scripts in the path (default)
 QR_DETECTION='basic_qr_detection.py'
 TA_ANALYSIS='hbbtv_ta_analysis.py'
+
+## Linux or Mac, scripts in this folder (uncomment following two lines)
+#QR_DETECTION='./basic_qr_detection.py'
+#TA_ANALYSIS='./hbbtv_ta_analysis.py'
+
+## Cygwin, pre-pend python path (uncomment following lines / adjust folders)
+#QR_DETECTION='/cygdrive/c/Python38-32/python3 basic_qr_detection.py'
+#TA_ANALYSIS='/cygdrive/c/Python38-32/python3 hbbtv_ta_analysis.py'
 
 echo
 
