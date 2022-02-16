@@ -8,7 +8,7 @@ if (( ${#1} == 0 )); then echo "
 # Usage:  ./hbbtv_orchestrator.sh <video1.mp4> [<video2.mp4>] ... [videoN.mp4>]
 #         ./hbbtv_orchestrator.sh *.mp4
 #
-# jgupta@google.com - 20220211 - v0.4 - Linux, Mac, Cygwin config examples
+# jgupta@google.com - 20220216 - v1.0 - Linux, Mac, Cygwin config examples
 "; exit; fi
 
 # script and python location

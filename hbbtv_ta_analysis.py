@@ -5,7 +5,7 @@
 #
 # Usage:  ./hbbtv_ta_analysis.py <input1.csv> [<input2.csv>] ... [<inputN.csv>]
 #
-# jgupta@google.com - 20220204 - v0.5 - outputs one CSV file from all tests
+# jgupta@google.com - 20220216 - v1.0 - release candidate
 
 import argparse, os, csv, re
 from datetime import datetime
@@ -40,7 +40,7 @@ set4 = {
     'label':    'DTG-ADINS-BB',
     'first':    1,
     'last':     5825,
-    'minimum':  1,
+    'minimum':  0.998,  # allow 11 missing frames for a successful test
     'maximum':  1
     }
 set5 = {
@@ -64,7 +64,8 @@ set6 = {
 outprefix = 'TA-OUTPUT'
 outfile = outprefix + '-' + datetime.today().strftime('%Y%m%d-%H%M%S') + '.csv'
 out = open(outfile, 'w')
-out.write('Device.name,Device.useragent,Test.result,Test.type,Test.source,Test.starttime,Test.endtime,Test.taapi,Test.delay,')
+out.write('Device.name,Device.useragent,Device.overall,Device.reason,')
+out.write('Test.result,Test.msg,Test.vtype,Test.tsource,Test.starttime,Test.endtime,Test.taapi,Test.delay,')
 out.write('Section.name,Section.result,Section.gap,Section.length,Section.missingstart,Section.missingend,')
 out.write('Section.frames,Section.unique,Section.first,Section.last,Section.start,Section.end,Section.inverted')
 out.write('\n')
@@ -97,19 +98,27 @@ args = parser.parse_args()
 
 # open each CSV file in turn, process it and output results
 for filename in args.infile:
-    if os.path.exists(filename) and filename.find(outprefix) != -1:
+    if filename.find(outprefix) != -1:
+        break
+    if not os.path.exists(filename):
         print('File not found: %s\n' % filename)
-        break;        
+        break        
     with open(filename, mode='r') as csv_file:
         # reset lookup tables for storing facts for each section
-        count    = dict()  # number of frames
-        inverted = dict()  # number of inverted frames
-        first    = dict()  # first frame number
-        last     = dict()  # last frame number
-        start    = dict()  # time of first frame
-        end      = dict()  # time of last frame
-        visited  = dict()  # list of frames visited (calculate unique frames)
-        params   = dict()  # test params collected from the CONFIG QR code
+        count     = dict()  # number of frames
+        inverted  = dict()  # number of inverted frames
+        first     = dict()  # first frame number
+        last      = dict()  # last frame number
+        start     = dict()  # time of first frame
+        end       = dict()  # time of last frame
+        visited   = dict()  # list of frames visited (calculate unique frames)
+        params    = dict()  # test params collected from the CONFIG QR code
+        intact    = dict()  # if section is complete, incomplete or unexpected
+        gap3dp    = dict()  # section gap in seconds, three decimal places
+        len3dp    = dict()  # section length in seconds, three decimal places
+        missstart = dict()  # number of frames missing at the start
+        missend   = dict()  # number of frames missing at the end
+        unique    = dict()  # number of unique frames
 
         # reset device config, counter and open file
         device = ''
@@ -162,6 +171,7 @@ for filename in args.infile:
                         this_section = section[row['qr_label']][frame]
                         end[this_section] = float(row['wallclock'].replace(':',''))
             line_count += 1
+
         # output the report
         print ()
 
@@ -181,23 +191,25 @@ for filename in args.infile:
             # extract the test params
             testparams = re.split (';', metadata[0])
             params = dict(s.split('=',1) for s in testparams)
-            outdevice = '%s,\"%s\",%s,%s,%s,%s,%s,%s,%s' % (fileparts[0], metadata[1], params['result'], params['vtype'], 
+            outdevice = '%s,\"%s\"' % (fileparts[0], metadata[1])
+            outtest = '%s,\"%s\",%s,%s,%s,%s,%s,%s' % (params['result'], params['msg'], params['vtype'],
                 params['tsource'], params['starttime'], params['endtime'], params['taapi'], params['delay'])
         else:
             print('Test Config: Not detected\n')
-            outdevice = fileparts[0] + ',N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A'
+            outdevice = fileparts[0] + ',[not detected]'
+            outtest = ',,,,,,,'
 
         ## frames and timings 
         for key in count.keys():
             # calculate number of unique frames
             visited_set = set(visited[key])
-            visited_uniq = len(visited_set)
+            unique[key] = len(visited_set)
 
             # show section stats
             print('%s:\t%s frames\t %s unique: %s>%s, time: %s>%s, inverted: %s' % 
-                    (key, count[key], visited_uniq, first[key], last[key], start[key], end[key], inverted[key]))
-        
-        print()
+                (key, count[key], unique[key], first[key], last[key], start[key], end[key], inverted[key]))
+        if count:
+            print ()
 
         ## transitions
         lasttime = 0
@@ -207,12 +219,12 @@ for filename in args.infile:
                 lasttime = start[key]
             gap = start[key] - lasttime
             length = end[key] - start[key]
-            gap3dp = format(gap,'.3f')
-            length3dp = format(length,'.3f')
+            gap3dp[key] = format(gap,'.3f')
+            len3dp[key] = format(length,'.3f')
 
             # determine how complete the section was
-            missingstart = first[key] - config[key]['first']
-            missingend = config[key]['last'] - last[key]
+            missstart[key] = first[key] - config[key]['first']
+            missend[key] = config[key]['last'] - last[key]
 
             # calculate intact %
             intactcount = 0
@@ -225,31 +237,58 @@ for filename in args.infile:
 
             # construct result
             if intactportion < config[key]['minimum']:
-                intactresult = 'INCOMPLETE'
+                intact[key] = 'INCOMPLETE'
             elif intactportion > config[key]['maximum']:
-                intactresult = 'UNEXPECTED'
+                intact[key] = 'UNEXPECTED'
             else:
-                intactresult = 'OK'
+                intact[key] = 'COMPLETE'
 
             # show section tests results
-            print('%s:\t%s\t\t gap %ss, length %ss, missing start %s, end %s' % (key, intactresult, gap3dp, length3dp, missingstart, missingend))
+            print('%s:\t%s\t gap %ss, length %ss, missing start %s, end %s' %
+                (key, intact[key], gap3dp[key], len3dp[key], missstart[key], missend[key]))
             lasttime = end[key]  # set the time for next section
+        if count:
+            print ()
 
-            ## for output file
-            # calculate number of unique frames
-            visited_set = set(visited[key])
-            visited_uniq = len(visited_set)
+        ## overall result
+        overall = 'PASS'
+        reason = ''
+        for key in config.keys(): 
+            # check if we are missing a section which must be present
+            if key not in intact.keys() and config[key]['minimum'] > 0:
+                overall = 'FAIL'
+                if reason != '':
+                    reason = reason + '; '
+                if key not in intact.keys():
+                    reason = reason + key + ' MISSING'
+                else:
+                    reason = reason + key + ' ' + intact[key]
+            # record present sections which were not complete
+            elif key in intact.keys() and intact[key] != 'COMPLETE':
+                overall = 'FAIL'
+                if reason != '':
+                    reason = reason + '; '
+                reason = reason + key + ' ' + intact[key]
+        # if still passing the test, add a reason
+        if overall == 'PASS':
+            reason = 'All sections COMPLETE'
+        print('Overall result:\t%s\t%s' % (overall, reason))
 
+        ## output file
+        for key in count.keys():
             # show the device, then the results, then the section stats
-            out.write('%s,%s,%s,%s,%s,%s,%s,' % (outdevice, key, intactresult, gap3dp, length3dp, missingstart, missingend))
-            out.write('%s,%s,%s,%s,%s,%s,%s' % (count[key], visited_uniq, first[key], last[key], start[key], end[key], inverted[key]))
+            out.write('%s,%s,%s,%s,' % (outdevice, overall, reason, outtest))
+            out.write('%s,%s,%s,%s,%s,%s,' % (key, intact[key], gap3dp[key], len3dp[key], missstart[key], missend[key]))
+            out.write('%s,%s,%s,%s,%s,%s,%s' % (count[key], unique[key], first[key], last[key], start[key], end[key], inverted[key]))
             out.write('\n')
 
         # if there are no sections detected, add row to output file
         if len(count) == 0:
-            out.write(outdevice + ',,,,,,,,,,,,,\n')
+            out.write('%s,%s,%s,%s,' % (outdevice, overall, reason, outtest))
+            out.write(',,,,,,,,,,,,\n')
 
-        print()      
+        # space between tests
+        print ()      
 
 # end
 print('Results exported to %s\n' % outfile)
