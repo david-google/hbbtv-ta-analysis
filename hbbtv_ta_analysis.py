@@ -191,6 +191,9 @@ for filename in args.infile:
             # extract the test params
             testparams = re.split (';', metadata[0])
             params = dict(s.split('=',1) for s in testparams)
+            # support empty msg
+            if 'msg' not in params.keys():
+                params['msg']=''
             outdevice = '%s,\"%s\"' % (fileparts[0], metadata[1])
             outtest = '%s,\"%s\",%s,%s,%s,%s,%s,%s' % (params['result'], params['msg'], params['vtype'],
                 params['tsource'], params['starttime'], params['endtime'], params['taapi'], params['delay'])
