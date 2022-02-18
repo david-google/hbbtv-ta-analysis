@@ -90,6 +90,7 @@ while True:
 		bcs_sorted = list(sorted(bcs, key=lambda bc: bc[2]))
 		
 		i=1
+		nb_bcs = len(bcs_sorted)
 		for bc in bcs_sorted:
 			# IMPORTANT: this is only a VERY rudimentary classiifcation mechanism for quick testing
 			# some miscategorisation can occur, so some limited additional analysis of the results will be needed
@@ -101,6 +102,8 @@ while True:
 					diff = "next"
 				elif bc[2] > last_barcode[2]+1:
 					diff = "skipped"
+				elif bcs_sorted[i-1][2] < bcs_sorted[i%nb_bcs][2]:
+					continue	# skip inverted barcodes re-detected within the same frame as other subsequent barcodes
 				elif bc[2] < last_barcode[2]+1:
 					diff = "inverted"
 			
@@ -109,7 +112,7 @@ while True:
 				print("{} [{} @ {}] {}: {} {} {} {}".format(datetime.datetime.now().isoformat(), padded_frame+'-'+str(i), timecode, 'QRCODE', bc[0], bc[1], str(bc[2]), bc[3]))
 				res[padded_frame+'-'+str(i)] = {'wallclock':timecode, 'barcode_present':'QRCODE', 'qr_label':bc[0], 'qr_timestamp':bc[1], 'qr_frame':bc[2],'prev_frame_diff':'','config':bc[3]}
 			else:
-				print("{} [{} @ {}] {}: {} {} {} {}".format(datetime.datetime.now().isoformat(), padded_frame+'-'+str(i), timecode, 'QRCODE', bc[0], bc[1], str(bc[2]), diff))
+				print("{} [{} @ {}] {}: {} {} {} {} {}".format(datetime.datetime.now().isoformat(), padded_frame+'-'+str(i), timecode, 'QRCODE', bc[0], bc[1], '<start:'+str(first_frame_nb)+' last:'+str(max_frame_nb_reached)+'>', str(bc[2]), diff))
 				res[padded_frame+'-'+str(i)] = {'wallclock':timecode, 'barcode_present':'QRCODE', 'qr_label':bc[0], 'qr_timestamp':bc[1], 'qr_frame':bc[2],'prev_frame_diff':diff,'config':''}
 			i+=1
 			
@@ -118,8 +121,8 @@ while True:
 				first_frame_nb = bc[2]
 				max_frame_nb_reached = bc[2]
 			last_barcode = bc
-			# stream in recording may loop back to first frame
-			if (bc[2] < first_frame_nb-3 or bc[2] < 2) and max_frame_nb_reached > 1:
+			# stream in recording may loop back to first frame (with tolerance for 2s of skipped frames @25fps)
+			if (bc[2] < first_frame_nb-3 or bc[2] < 50) and max_frame_nb_reached > 49:
 				first_frame_nb = bc[2]
 				max_frame_nb_reached = bc[2]
 			# in case frame N+1/+2/+3 detected before N at start of recording (due to presence of multiple QR codes on screen)
