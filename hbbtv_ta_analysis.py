@@ -129,6 +129,11 @@ for filename in args.infile:
         for row in csv_reader:
             if line_count == 0:
                 line_count += 1
+
+            # skip rows without a qr_frame
+            if 'qr_frame' not in row.keys():
+                break
+
             if row['qr_frame']:
                 if row['prev_frame_diff'] != 'duplicate':
                     # account for this frame
@@ -207,6 +212,10 @@ for filename in args.infile:
             # calculate number of unique frames
             visited_set = set(visited[key])
             unique[key] = len(visited_set)
+
+            # fix: populate inverted[key] if missing
+            if key not in inverted.keys():
+                 inverted[key] = 0
 
             # show section stats
             print('%s:\t%s frames\t %s unique: %s>%s, time: %s>%s, inverted: %s' % 
