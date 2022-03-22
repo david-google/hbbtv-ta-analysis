@@ -5,7 +5,7 @@
 #
 # Usage:  ./hbbtv_ta_analysis.py <input1.csv> [<input2.csv>] ... [<inputN.csv>]
 #
-# jgupta@google.com - 20220216 - v1.0 - release candidate
+# jgupta@google.com - 20220322 - v1.1 - inverted frame bugfix when 1 frame only
 
 import argparse, os, csv, re
 from datetime import datetime
