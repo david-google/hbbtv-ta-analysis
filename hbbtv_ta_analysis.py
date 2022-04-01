@@ -5,7 +5,7 @@
 #
 # Usage:  ./hbbtv_ta_analysis.py <input1.csv> [<input2.csv>] ... [<inputN.csv>]
 #
-# jgupta@google.com - 20220331 - v1.2 - adjusted thresholds to maximise reach
+# jgupta@google.com - 20220331 - v1.3 - adjusted thresholds further
 
 import argparse, os, csv, re
 from datetime import datetime
@@ -16,7 +16,7 @@ set1 = {
     'label':    'DTG-ADINS-BC',
     'first':    3650,
     'last':     4011,
-    'minimum':  0.98,   # allow 7 missing frames for a successful test
+    'minimum':  0.966,  # allow 11 missing frames for a successful test
     'maximum':  1
     }
 set2 = {
@@ -40,7 +40,7 @@ set4 = {
     'label':    'DTG-ADINS-BB',
     'first':    1,
     'last':     5825,
-    'minimum':  0.998,  # allow 11 missing frames for a successful test
+    'minimum':  0.9955, # allow 26 missing frames for a successful test
     'maximum':  1
     }
 set5 = {
