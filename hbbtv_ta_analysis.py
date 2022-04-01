@@ -5,7 +5,7 @@
 #
 # Usage:  ./hbbtv_ta_analysis.py <input1.csv> [<input2.csv>] ... [<inputN.csv>]
 #
-# jgupta@google.com - 20220322 - v1.1 - inverted frame bugfix when 1 frame only
+# jgupta@google.com - 20220331 - v1.2 - adjusted thresholds to maximise reach
 
 import argparse, os, csv, re
 from datetime import datetime
@@ -14,9 +14,9 @@ from datetime import datetime
 set1 = {
     'section':  'Broadcast part 1',
     'label':    'DTG-ADINS-BC',
-    'first':    3400,
+    'first':    3650,
     'last':     4011,
-    'minimum':  0.99,
+    'minimum':  0.98,   # allow 7 missing frames for a successful test
     'maximum':  1
     }
 set2 = {
@@ -55,8 +55,8 @@ set6 = {
     'section':  'Broadcast part 2',
     'label':    'DTG-ADINS-BC',
     'first':    9961,
-    'last':     10100,
-    'minimum':  0.99,
+    'last':     10070,
+    'minimum':  0.95,   # allow 5 missing frames for a successful test
     'maximum':  1
     }
 
