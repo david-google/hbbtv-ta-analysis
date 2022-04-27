@@ -33,7 +33,7 @@ max_frame_nb_reached = 0
 first_frame_nb = 0
 frame_nb = 0
 frame_timestamp = "00:00:00.000"
-margin = 225
+margin = 250
 
 # read frames until entire video has been parsed
 while True:
@@ -53,7 +53,7 @@ while True:
 	dres_frame = cv2.resize(frame, (frame_width, frame_height))
 	
 	# calculate approximate qr code area
-	qr_area_topleft_x = int(frame_width * 0.1)
+	qr_area_topleft_x = int(frame_width * 0.1 - margin/2)
 	qr_area_topleft_y = int(frame_height/2 - frame_height*0.25 - margin/2)
 	qr_area_bottomright_x = int(frame_width * 0.1 + 2*frame_height*0.25 + margin)
 	qr_area_bottomright_y = int(frame_height/2 + frame_height*0.25 + margin/2)
