@@ -5,7 +5,7 @@
 #
 # Usage:  ./hbbtv_ta_analysis.py <input1.csv> [<input2.csv>] ... [<inputN.csv>]
 #
-# jgupta@google.com - 20220401 - v1.3 - adjusted thresholds further
+# jgupta@google.com - 20220607 - v1.4 - allow missing frames at start or end
 
 import argparse, os, csv, re
 from datetime import datetime
@@ -16,8 +16,9 @@ set1 = {
     'label':    'DTG-ADINS-BC',
     'first':    3650,
     'last':     4011,
-    'minimum':  0.966,  # allow 12 missing frames for a successful test
-    'maximum':  1
+    'minimum':  0.95,   # allow 18 missing frames for a successful test
+    'maximum':  1,
+    'maxloss':  10      # allow max 10 frames missing at start or end
     }
 set2 = {
     'section':  'Broadcast take-off',
@@ -40,8 +41,9 @@ set4 = {
     'label':    'DTG-ADINS-BB',
     'first':    1,
     'last':     5825,
-    'minimum':  0.9955, # allow 27 missing frames for a successful test
-    'maximum':  1
+    'minimum':  0.995,  # allow 29 missing frames for a successful test
+    'maximum':  1,
+    'maxloss':  10      # allow max 10 frames missing at start or end
     }
 set5 = {
     'section':  'Broadcast landing',
@@ -254,6 +256,10 @@ for filename in args.infile:
                 intact[key] = 'UNEXPECTED'
             else:
                 intact[key] = 'COMPLETE'
+                # check to see if frame loss at start/end was higher than allowed
+                if 'maxloss' in config[key].keys():
+                    if missstart[key] > config[key]['maxloss'] or missend[key] > config[key]['maxloss']:
+                        intact[key] = 'INCOMPLETE'
 
             # show section tests results
             print('%s:\t%s\t gap %ss, length %ss, missing start %s, end %s' %
