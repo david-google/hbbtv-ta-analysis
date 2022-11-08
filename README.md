@@ -10,13 +10,13 @@ This project comprises three scripts, two using Python 3 and one using Bash. The
 *Author: nicholas.frame@tpv-tech.com*
 
 This script takes an MP4 video file as input and outputs a CSV file containing all QR codes detected, along with the timecodes, using a Python interface to the Zbar QR code detection software.
-
+'''
 % basic_qr_detection.py
 usage: basic_qr_detection.py [-h] -v VIDEO
 basic_qr_detection.py: error: the following arguments are required: -v/--video
-
+'''
 When running the script on an MPG video file (either directly, or via the **hbbtv_orchestrator.sh** script), the script outputs a CSV file, containing timecodes, whether a barcode was present, the label of any barcode, the timestamp of the QR code, whether this QR code has been seen before and whether it is in sequence. In addition, at the end of the stream, the script will pick up the value of the 'config' QR code, which if available, provides additional information about the specific device.
-
+'''
 % basic_qr_detection.py test.mpg
 [outputs file test.csv]
 
@@ -36,20 +36,20 @@ wallclock,barcode_present,qr_label,qr_timestamp,qr_frame,prev_frame_diff,config
 ...
 00:06:28.914,QRCODE,CONFIG,00:06:46.520,10163,,"result=2;msg=Test has ended after the switch back to broadcast.;vtype=0;tsource=0;starttime=0;endtime=2;taapi=0;delay=0;ua=Mozilla/5.0 (Linux armv7l) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.143 Safari/537.36 OPR/40.0.2207.0 OMI/4.9.0.150.DOM3.67 Model/Vestel-MB130 VSTVB MB100 FVC/2.0 (OEM; MB130; ) HbbTV/1.4.1 (; OEM; MB130; 3.22.100.1; _TV_G10_2017; ;) SmartTvA/3.0.0"
 ...
-
+'''
 ### hbbtv_ta_analysis.py
 
 *Authors: jgupta@google.com*
 *Reviewer: duhlmann@google.com*
 
 This script takes one or more CSV files produced by **basic_qr_detection.py** and produces a summary report showing which sections of ads and content were detected along with the timings of any switches from broadcast to broadband content and back again.
-
+'''
 % hbbtv_ta_analysis.py
 usage: hbbtv_ta_analysis.py [-h] CSV [CSV ...]
 hbbtv_ta_analysis.py: error: the following arguments are required: CSV
-
+'''
 If passed one or more CSV files produced by the **basic_qr_detection.py** script (either directly, or via the **hbbtv_orchestrator.sh** script), the script will output the results on the command line in a hunan readible report and additionally store these results in a CSV file for later processing and analysis.
-
+'''
 % hbbtv_ta_analysis.py test.csv
 
 Device Name: "test1"
@@ -67,22 +67,22 @@ Broadcast part 2:	COMPLETE	 gap 0.009s, length 4.387s, missing start 0, end 0
 Overall result:	FAIL	Broadcast part 1 MISSING
 
 Results exported to TA-OUTPUT-20221103-191311.csv
-
+'''
 ### hbbtv_orchestrator.sh
 
 Author: jgupta@google.com
-
+'''
 \# run testing orchestrator across all mp4 files (QR code detection & analysis)
 % hbbtv_orchestrator.sh *.mp4
-
+'''
 ## Expected usage
 
 Typical usage will be:
-
+'''
 \# run testing orchestrator across all mp4 files (QR code detection & analysis)
 % hbbtv_orchestrator.sh *.mp4
 
 \# re-run analysis script across existing QR code CSV files
 % hbbtv_ta_analysis.py *.csv
-
+'''
 It can be convenient to re-run the analysis on a set or subset of files in order to create a specific report (e.g. for a set of devices, a specific manufacturer, etc.), or alternatively to re-run the analysis after having set a different set of quality thresholds within the **hbbtv_ta_analysis.py**.
