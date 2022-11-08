@@ -67,6 +67,69 @@ Overall result:	FAIL	Broadcast part 1 MISSING
 
 Results exported to TA-OUTPUT-20221103-191311.csv
 ```
+The **hbbtv_ta_analysis.py** can be configured to look for the presence and completeness of various sections within the video file. The scripts are currently configured with the optimal settings determined by the DTG Targeted Ads Substitution working group to maximise the reach of receievers which would pass the test at an 'acceptible user experience' (defined by the group to be losing not more than 1 second of content at the start or end of the ad break).
+```
+# test config: one set for each section, sections in order frames may appear
+set1 = {
+    'section':  'Broadcast part 1',
+    'label':    'DTG-ADINS-BC',
+    'first':    3650,
+    'last':     4011,
+    'minimum':  0.95,   # allow 18 missing frames for a successful test
+    'maximum':  1,
+    'maxloss':  10      # allow max 10 frames missing at start or end
+    }
+set2 = {
+    'section':  'Broadcast take-off',
+    'label':    'DTG-ADINS-BC',
+    'first':    4012,
+    'last':     4016,
+    'minimum':  0,
+    'maximum':  1
+    }
+set3 = {
+    'section':  'Broadcast adverts',
+    'label':    'DTG-ADINS-BC',
+    'first':    4017,
+    'last':     9836,
+    'minimum':  0,
+    'maximum':  0
+    }
+set4 = {
+    'section':  'Digital adverts',
+    'label':    'DTG-ADINS-BB',
+    'first':    1,
+    'last':     5825,
+    'minimum':  0.995,  # allow 29 missing frames for a successful test
+    'maximum':  1,
+    'maxloss':  10      # allow max 10 frames missing at start or end
+    }
+set5 = {
+    'section':  'Broadcast landing',
+    'label':    'DTG-ADINS-BC',
+    'first':    9837,
+    'last':     9960,
+    'minimum':  0,
+    'maximum':  1
+    }
+set6 = {
+    'section':  'Broadcast part 2',
+    'label':    'DTG-ADINS-BC',
+    'first':    9961,
+    'last':     10070,
+    'minimum':  0.95,   # allow 5 missing frames for a successful test
+    'maximum':  1
+    }
+```
+The parameters are defined as follows:
+
+**'section'** is a human readible name for the content or ads section, to be displayed in the report
+**'label'** is the label name encoded in the QR code in the test transport stream or ad stream video
+**'first'** is the ID of the first frame within that section
+**'last'** is the ID of the last frame within that section
+**'minimum'** is a value between 0 and 1 defining how much of the section required for a passing test (e.g. 1 would be required)
+**'maximum'** is a value between 0 and 1 defining how much of the section required for a passing test (e.g. 0 would be optional)
+
 ### hbbtv_orchestrator.sh
 
 Author: jgupta@google.com
