@@ -9,7 +9,7 @@ This project comprises three scripts, two using Python 3 and one using Bash. The
 
 *Author: nicholas.frame@tpv-tech.com*
 
-This script takes an MP4 video file as input and outputs a CSV file containing all QR codes detected, along with the timecodes, using a Python interface to the Zbar QR code detection software.
+This script takes an MP4 video file as input and outputs a CSV file containing all QR codes detected, along with the timecodes, using a Python interface to the Zbar QR code detection software. The script is intensive and can take up to 20 mins to process an 8 minute video file. 
 ```
 % basic_qr_detection.py
 basic_qr_detection.py: error: the following arguments are required: -v/--video
@@ -135,14 +135,18 @@ The **'minimum'**, **'maximum'** and **'maxloss'** parameters set the thresholds
 
 ### hbbtv_orchestrator.sh
 
-Author: jgupta@google.com
+*Author: jgupta@google.com*
+
+For convenience and in order to run the scripts across a large number of video files in the DTG Zoo, the **hbbtv_orchestrator.sh** script was created. A large number of tests were videod on handheld cameras and then put into folders in batches. The **hbbtv_orchestrator.sh** script was then run on each batch producing individual CSV reports for each test, along with a single composite test.
 ```
 # run testing orchestrator across all mp4 files (QR code detection & analysis)
 % hbbtv_orchestrator.sh *.mp4
 ```
 ## Expected usage
 
-Typical usage will be:
+When running a large number of tests, the time consuming piece is processing the video files (which takes up to 20 mins per 8 minute video file). Once you have the CSV files from each test, you can rerun the **hbbtv_ta_analysis.py** to produce a new **TA_OUTPUT** CSV file very quickly.
+
+Typical usage of the scripts will therefore be as follows:
 ```
 # run testing orchestrator across all mp4 files (QR code detection & analysis)
 % hbbtv_orchestrator.sh *.mp4
