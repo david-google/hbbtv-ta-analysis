@@ -47,7 +47,7 @@ This script takes one or more CSV files produced by **basic_qr_detection.py** an
 usage: hbbtv_ta_analysis.py [-h] CSV [CSV ...]
 hbbtv_ta_analysis.py: error: the following arguments are required: CSV
 ```
-If passed one or more CSV files produced by the **basic_qr_detection.py** script (either directly, or via the **hbbtv_orchestrator.sh** script), the script will output the results on the command line in a hunan readible report and additionally store these results in a CSV file for later processing and analysis.
+If passed one or more CSV files produced by the **basic_qr_detection.py** script (either directly, or via the **hbbtv_orchestrator.sh** script), the script will output the results on the command line in a human readible report and additionally store these results in a CSV file for later processing and analysis.
 ```
 % hbbtv_ta_analysis.py test.csv
 
@@ -67,7 +67,7 @@ Overall result:	FAIL	Broadcast part 1 MISSING
 
 Results exported to TA-OUTPUT-20221103-191311.csv
 ```
-The **hbbtv_ta_analysis.py** can be configured to look for the presence and completeness of various sections within the video file. The scripts are currently configured with the optimal settings determined by the DTG Targeted Ads Substitution working group to maximise the reach of receievers which would pass the test at an 'acceptible user experience' (defined by the group to be losing not more than 1 second of content at the start or end of the ad break).
+The **hbbtv_ta_analysis.py** can be configured to look for the presence and completeness of various sections within the video file. The scripts are currently configured with the optimal settings determined by the DTG Targeted Ads Substitution working group to maximise the reach of receivers which would pass the test at an 'acceptable user experience' (defined by the group to be losing not more than 1 second of content at the start or end of the ad break).
 ```
 # test config: one set for each section, sections in order frames may appear
 set1 = {
@@ -122,13 +122,16 @@ set6 = {
     }
 ```
 The parameters are defined as follows:
-
+```
 **'section'** is a human readible name for the content or ads section, to be displayed in the report
 **'label'** is the label name encoded in the QR code in the test transport stream or ad stream video
 **'first'** is the ID of the first frame within that section
 **'last'** is the ID of the last frame within that section
-**'minimum'** is a value between 0 and 1 defining how much of the section required for a passing test (e.g. 1 would be required)
-**'maximum'** is a value between 0 and 1 defining how much of the section required for a passing test (e.g. 0 would be optional)
+**'minimum'** is a value between 0 and 1 defining how much of the section required for a passing test (e.g. 1 every frame would be required)
+**'maximum'** is a value between 0 and 1 defining how much of the section required for a passing test (e.g. 0 no frames are required)
+**'maxloss'** is an optional parameter to define the maximum number of frames that can be missing from the start or end of a section
+```
+The **'minimum'**, **'maximum'** and **'maxloss'** paramters are used to set the thresholds which apply to each section in order for it to be considered a pass or a fail for each test. Any test where all sections pass is considered an overall passing test. These threshold parameters can be used together, e.g. for the **'Broadcast landing'** section above, a **'minimum'** of **0** and a **'maximum'** of **1** means the section is optional.
 
 ### hbbtv_orchestrator.sh
 
