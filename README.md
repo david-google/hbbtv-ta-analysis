@@ -47,7 +47,7 @@ This script takes one or more CSV files produced by **basic_qr_detection.py** an
 usage: hbbtv_ta_analysis.py [-h] CSV [CSV ...]
 hbbtv_ta_analysis.py: error: the following arguments are required: CSV
 ```
-If passed one or more CSV files produced by the **basic_qr_detection.py** script (either directly, or via the **hbbtv_orchestrator.sh** script), the script will output the results on the command line in a human readible report and additionally store these results in a CSV file for later processing and analysis.
+If passed one or more CSV files produced by the **basic_qr_detection.py** script (either directly, or via the **hbbtv_orchestrator.sh** script), the script will output the results on the command line in a human readible report and additionally store these results in a special CSV file **TA-OUTPUT-YYYYMMDD-HHMMSS.csv** for later processing and analysis. The **TA-OUTPUT** CSV file contains the same data presented in the example below.
 ```
 % hbbtv_ta_analysis.py test.csv
 
