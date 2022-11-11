@@ -131,7 +131,7 @@ The parameters are defined as follows:
 'maximum' is a value between 0 and 1 defining how much of the section required for a passing test (e.g. 0 no frames are required)
 'maxloss' is an optional parameter to define the maximum number of frames that can be missing from the start or end of a section
 ```
-The **'minimum'**, **'maximum'** and **'maxloss'** paramters are used to set the thresholds which apply to each section in order for it to be considered a pass or a fail for each test. Any test where all sections pass is considered an overall passing test. These threshold parameters can be used together, e.g. for the **'Broadcast landing'** section above, a **'minimum'** of **0** and a **'maximum'** of **1** means the section is optional.
+The **'minimum'**, **'maximum'** and **'maxloss'** parameters set the thresholds which apply to each section in order for it to be considered a pass or a fail for each test. Any test where all sections pass is considered an overall passing test. These threshold parameters can be used together, e.g. for the **'Broadcast landing'** section above, a **'minimum'** of **0** and a **'maximum'** of **1** means the section is optional.
 
 ### hbbtv_orchestrator.sh
 
